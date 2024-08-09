@@ -17,20 +17,26 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.php.checks;
+package org.sonar.php.tree.visitors;
 
-import org.junit.jupiter.api.Test;
-import org.sonar.plugins.php.CheckVerifier;
+import org.sonar.plugins.php.api.symbols.SymbolTable;
+import org.sonar.plugins.php.api.tree.statement.UseClauseTree;
+import org.sonar.plugins.php.api.visitors.PHPVisitorCheck;
 
-class KeywordsAndConstantsNotLowerCaseCheckTest {
+/**
+ * Visitor that detects the framework used in the analyzed file.
+ */
+public class FrameworkDetectionVisitor extends PHPVisitorCheck {
+  private SymbolTable.Framework framework = SymbolTable.Framework.EMPTY;
 
-  @Test
-  void testLowercase() {
-    CheckVerifier.verify(new KeywordsAndConstantsNotLowerCaseCheck(), "KeywordsAndConstantsNotLowerCaseCheck.php");
+  @Override
+  public void visitUseClause(UseClauseTree tree) {
+    if (tree.namespaceName().qualifiedName().startsWith("Drupal")) {
+      this.framework = SymbolTable.Framework.DRUPAL;
+    }
   }
 
-  @Test
-  void testDrupalConvention() {
-    CheckVerifier.verify(new KeywordsAndConstantsNotLowerCaseCheck(), "KeywordsAndConstantsNotLowerCaseWithDrupalCheck.php");
+  public SymbolTable.Framework getFramework() {
+    return framework;
   }
 }

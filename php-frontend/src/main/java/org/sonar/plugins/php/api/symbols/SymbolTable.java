@@ -40,4 +40,15 @@ public interface SymbolTable {
   Scope getScopeFor(Tree tree);
 
   Symbol getSymbol(Tree tree);
+
+  Framework getFramework();
+
+  /**
+   * Some specific PHP frameworks can be detected by the plugin. The rules can then use this information
+   * to adapt their behavior.
+   */
+  enum Framework {
+    DRUPAL,
+    EMPTY,
+  }
 }
